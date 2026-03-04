@@ -1,0 +1,54 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Infrastructure for Kinesis Data Stream - Sentinel Fraud Detection Ingestion Layer",
+    "Parameters": {
+        "ProjectName": {
+            "Type": "String",
+            "Default": "sentinel-fraud-detection"
+        }
+    },
+    "Resources": {
+        "TransactionInputStream": {
+            "Type": "AWS::Kinesis::Stream",
+            "DeletionPolicy": "Delete",
+            "Properties": {
+                "Name": {
+                    "Fn::Sub": "${ProjectName}-transaction-stream"
+                },
+                "RetentionPeriodHours": 24,
+                "StreamModeDetails": {
+                    "StreamMode": "ON_DEMAND"
+                },
+                "Tags": [
+                    {
+                        "Key": "Project",
+                        "Value": {
+                            "Ref": "ProjectName"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "StreamName": {
+            "Value": {
+                "Ref": "TransactionInputStream"
+            },
+            "Export": {
+                "Name": "Sentinel-KinesisStreamName"
+            }
+        },
+        "StreamARN": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "TransactionInputStream",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": "Sentinel-KinesisStreamARN"
+            }
+        }
+    }
+}
